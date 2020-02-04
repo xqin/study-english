@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+    <script type="text/javascript" src="vue.js"></script>
+    <script type="text/javascript" src="element-ui/lib/index.js"></script>
+    <style>
+      body {
+        background:rgb(247, 246, 246);
+        color: #333;
+        font-family: 'Microsoft YaHei Mono', '微软雅黑', Tahoma, Helvetica, Arial, sans-serif;
+      }
+
+      #app {
+        width: 768px;
+        margin: 20px auto;
+        min-height: 600px;
+      }
+
+      #app input[type=text] {
+        font-size: 20px;
+      }
+
+      #hcpron {
+        color: #666;
+        padding-top: 10px;
+      }
+
+      #hcpron bdo, #hcpron font, #hcpron .audio {
+        color: #aaa;
+      }
+
+      #hcpron .pron {
+        padding-right: 5px;
+        display: inline-block;
+        line-height: 24px;
+      }
+
+      #hcpron bdo {
+        font-family: 'lucida sans unicode',arial,sans-serif,'Microsoft YaHei Mono', '微软雅黑';
+        font-size: 14px;
+        line-height: 24px;
+        font-weight: bold;
+        margin-left: 4px;
+      }
+
+      .audio {
+        background-position: -17px 0;
+        cursor: pointer;
+        display: inline-block;
+        height: 16px;
+        margin-left: .5em;
+        overflow: hidden;
+        position: relative;
+        top: 2px;
+        width: 16px;
+        background-image: url(i1/images/icon-new.png);
+        background-repeat: no-repeat;
+      }
+
+      .audio:hover, .audio-hover {
+        background-position: 0 0;
+      }
+
+      .audio.girl {
+        background-position: -17px -152px;
+      }
+
+      .audio.girl:hover {
+        text-decoration: none;
+        background-position: 0 -152px;
+      }
+
+      #exp ul {
+        padding: 0 10px;
+      }
+
+      #exp.chinese ul {
+        padding: 0 22px;
+      }
+
+      #exp.chinese li {
+        color: #32a9ba;
+        list-style: decimal;
+        font-size: 18px;
+        cursor: pointer;
+      }
+
+      #exp li {
+        font-weight: bold;
+        line-height: 30px;
+        list-style: none;
+      }
+
+      #exp li span {
+        min-width: 2em;
+        display: inline-block;
+        padding-right: .5em;
+        text-align: right;
+        font-family: Georgia,serif;
+        font-size: 16px;
+        font-weight: bold;
+        color: #094;
+      }
+
+      #app h1.keyword {
+        line-height: 1.25em;
+        margin: 4px 0;
+        font-size: 30px;
+        color: #094;
+        font-family: Verdana,Geneva,sans-serif,'Microsoft YaHei Mono', '微软雅黑';
+        word-wrap: break-word;
+      }
+
+      #app .word {
+        font-size: 20px;
+        color: #094;
+        font-family: Verdana,Geneva,sans-serif,'Microsoft YaHei Mono', '微软雅黑';
+        word-wrap: break-word;
+        line-height: 1.25em;
+        cursor: pointer;
+      }
+
+      #app .el-row {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <el-row>
+        <el-col :span="24">
+          <el-form @submit.native.prevent="search">
+            <el-input size="large" v-model="word" clearable>
+              <el-button slot="append" @click="search" :loading="loading" type="primary" icon="el-icon-search">Search</el-button>
+            </el-input>
+          </el-form>
+        </el-col>
+      </el-row>
+      <template v-if="dict">
+        <el-row>
+          <el-col :span="24">
+            <el-card class="box-card">
+              <div slot="header" class="clearfix">
+                <h1 class="keyword">{{dict.word}}</h1>
+              </div>
+              <div style="padding-left: 20px;">
+                <div id="hcpron" v-if="dict.symbol">
+                  <span class="pron" v-for="pron, idx in dict.symbol" v-html="genPronHtml(pron, idx)"></span>
+                </div>
+                <div id="exp" v-if="dict.exp" :class="dict.english ? 'english' : 'chinese'">
+                  <ul>
+                    <li v-for="exp in dict.exp" @click="dict.english || query(exp)" v-html="exp" />
+                  </ul>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
+      </template>
+      <el-row>
+        <el-row :span="24">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <div>历史查询</div>
+            </div>
+            <el-table :data="history" border height="478" style="width: 100%">
+              <el-table-column label="查询内容">
+                <template slot-scope="scope">
+                  <span class="word" @click="query(scope.row.dict.word)">{{scope.row.dict.word}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="查询日期" width="200">
+                <template slot-scope="scope">
+                  <span>{{toDate(scope.row.date)}}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-card>
+        </el-row>
+      </el-row>
+    </div>
+    <script type="text/javascript" src="study.js"></script>
+  </body>
+</html>

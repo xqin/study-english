@@ -1,0 +1,4 @@
+*
+!public/
+!package.json
+!server.js
