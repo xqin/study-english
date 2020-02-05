@@ -1,8 +1,33 @@
+var AudioContext = window.AudioContext || window.webkitAudioContext
 
+function getAudioContext () {
+  return new AudioContext()
+}
+
+function play(data) {
+  // create audio context
+  var context = getAudioContext()
+
+  context.decodeAudioData(data, function (audioBuffer) {
+    // create audio source
+    var source = context.createBufferSource()
+    source.buffer = audioBuffer
+    source.connect(context.destination)
+
+    // play audio
+    source.start()
+  })
+}
+
+function fetchAudio (url) {
+  return fetch(url).then(function (response) { return response.arrayBuffer() })
+}
+
+/**
+ * 这里不使用 new Audio 直接进行播放是因为使用该方式 chrome 向服务器发送请求时会带有 Range: 0- 请求头, 导致该请求的内容不能被 nginx 缓存起来
+ */
 function playAudio (url) {
-  var ddaudio = new Audio(url)
-  ddaudio.src = url
-  ddaudio.play()
+  return fetchAudio(url).then(play)
 }
 
 new Vue({
@@ -71,7 +96,7 @@ new Vue({
       var word = vm.word
 
       if (!word) {
-        return vm.$message.error('请输入内容！');
+        return vm.$message.error('请输入内容！')
       }
 
       vm.loading = true
@@ -92,7 +117,7 @@ new Vue({
         vm.history.unshift({date: Date.now(), dict})
         vm.saveHistory()
       }, function (e) {
-        vm.$message.error('查询出错，请重试！');
+        vm.$message.error('查询出错，请重试！')
       }).then(function () {
         vm.loading = false
       })
