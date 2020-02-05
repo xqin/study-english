@@ -55,7 +55,7 @@ const dict = (word) => {
   const key = md5(word)
 
   if (typeof cache[key] !== 'undefined') {
-    return Promise.resolve(cache[key])
+    return Promise.resolve(Object.assign({ cache: true }, cache[key]))
   }
 
   return get(`http://dict.cn/${encodeURIComponent(word)}`).then((html) => {
