@@ -47,7 +47,7 @@ const dict = (word) => get(`http://dict.cn/${encodeURIComponent(word)}`).then((h
     audios = getRegValues(/naudio="(.+?)" title/g, phonetic)
 
     if (audios) {
-      audios = audios.map((audioId) => `http://audio.dict.cn/${audioId}`)
+      audios = audios.map((audioId) => `/audio/${audioId}`)
     }
   }
 
