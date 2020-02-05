@@ -80,15 +80,7 @@ new Vue({
     query (word) {
       this.word = word
 
-      var historyIndex = this.history.findIndex((history) => history.dict.word === word)
-
-      if (historyIndex !== -1) {
-        this.dict = this.history[historyIndex].dict
-
-        this.history.unshift(this.history.splice(historyIndex, 1)[0])
-      } else {
-        this.search()
-      }
+      this.search()
     },
 
     search () {
@@ -99,6 +91,17 @@ new Vue({
         return vm.$message.error('请输入内容！')
       }
 
+      // 对于要查询的内容， 优先从 history 中去匹配
+      var historyIndex = vm.history.findIndex((history) => history.dict.word === word)
+
+      if (historyIndex !== -1) {
+        vm.dict = vm.history[historyIndex].dict
+
+        vm.history.unshift(vm.history.splice(historyIndex, 1)[0])
+        return
+      }
+
+      // 如果 history 中没有， 则展示为 loading 状态， 并向后台发起请求， 查询单词数据
       vm.loading = true
 
       fetch('dict?word=' + encodeURIComponent(word))
@@ -110,8 +113,6 @@ new Vue({
           vm.$message.error('查询无结果！')
           return
         }
-
-        vm.history = vm.history.filter((h) => h.dict.word !== word) // 从历史记录中过滤掉与当前单词相同的内容
 
         // 保存至历史记录中
         vm.history.unshift({date: Date.now(), dict})
