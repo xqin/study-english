@@ -74,11 +74,13 @@ const dict = (word) => get(`http://dict.cn/${encodeURIComponent(word)}`).then((h
 })
 
 app.get('/dict', function (req, res) {
-  const { word } = req.query
+  let { word } = req.query
 
-  if (!word) {
+  if (!word || word.length > 0x2f) { // 最长的单词 pneumonoultramicroscopicsilicovolcanoconiosis 45 个字符
     return res.jsonp({})
   }
+
+  word = word.toLowerCase() // 不管前端传入什么内容， 都统一转换为小写字母
 
   dict(word).then((json) => res.jsonp(json))
 })
