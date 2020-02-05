@@ -1,3 +1,4 @@
 audio/
 node_modules/
 package-lock.json
+cache.json
