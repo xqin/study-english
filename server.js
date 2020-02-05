@@ -1,4 +1,6 @@
-const http = require('request')
+const http = require('request').defaults({
+  timeout: 5000,
+})
 const express = require('express')
 const app = express()
 
