@@ -30,6 +30,8 @@ function playAudio (url) {
   return fetchAudio(url).then(play)
 }
 
+var NOP = function () {}
+
 new Vue({
   el: '#app',
   data: function () {
@@ -45,11 +47,28 @@ new Vue({
   watch: {
     word () {
       document.documentElement.scrollTop = 0
+    },
+    history () {
+      localStorage.setItem('history', JSON.stringify(this.history))
     }
   },
   methods: {
-    saveHistory () {
-      localStorage.setItem('history', JSON.stringify(this.history))
+    removeHistory (index) {
+      var vm = this
+
+      vm.$confirm('将从查询历史中删除该单词, 是否继续?', '提示', {
+        showClose: false,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(function () {
+        vm.history.splice(index, 1)
+
+        vm.$message({
+          type: 'success',
+          message: '删除成功!'
+        })
+      }, NOP)
     },
     toDate (now) {
       var date = new Date(now)
@@ -116,7 +135,6 @@ new Vue({
 
         // 保存至历史记录中
         vm.history.unshift({date: Date.now(), dict})
-        vm.saveHistory()
       }, function (e) {
         vm.$message.error('查询出错，请重试！')
       }).then(function () {
