@@ -41,7 +41,7 @@ new Vue({
       history: history,
       dict: null,
       loading: false,
-      word: ''
+      word: location.hash.substr(3) // support http://localhost/#!/test
     }
   },
   watch: {
@@ -50,6 +50,11 @@ new Vue({
     },
     history () {
       localStorage.setItem('history', JSON.stringify(this.history))
+    }
+  },
+  mounted () {
+    if (this.word) {
+      this.search()
     }
   },
   methods: {
@@ -109,6 +114,8 @@ new Vue({
       if (!word) {
         return vm.$message.error('请输入内容！')
       }
+
+      location.hash = '#!/' + word
 
       // 对于要查询的内容， 优先从 history 中去匹配
       var historyIndex = vm.history.findIndex((history) => history.dict.word === word)
