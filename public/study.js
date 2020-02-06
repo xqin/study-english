@@ -41,7 +41,7 @@ new Vue({
       history: history,
       dict: null,
       loading: false,
-      word: location.hash.substr(3) // support http://localhost/#!/test
+      word: decodeURIComponent(location.hash.substr(3)) // support http://localhost/#!/test
     }
   },
   watch: {
